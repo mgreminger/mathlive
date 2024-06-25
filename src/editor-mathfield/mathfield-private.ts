@@ -82,7 +82,7 @@ import './commands';
 import './styling';
 import {
   getCaretPoint,
-  getSelectionBounds,
+  findElementWithCaret,
   isValidMathfield,
   Rect,
   validateOrigin,
@@ -1030,98 +1030,14 @@ If you are using Vue, this may be because you are using the runtime-only build o
    */
   scrollIntoView(): void {
     if (!this.element) return;
-    //
-    // 1/ If using a mathfield element, make sure that the element is visible.
-    //
 
-    if (this.host) {
-      if (this.options.onScrollIntoView) this.options.onScrollIntoView(this);
-      else {
-        // 1.1/ Bring the mathfield into the viewport
-        this.host.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-
-        // 1.2/ If the virtual keyboard obscures the mathfield, adjust
-        if (
-          window.mathVirtualKeyboard.visible &&
-          window.mathVirtualKeyboard.container === window.document.body
-        ) {
-          const kbdBounds = window.mathVirtualKeyboard.boundingRect;
-          const mathfieldBounds = this.host.getBoundingClientRect();
-          if (mathfieldBounds.bottom > kbdBounds.top) {
-            window.document.scrollingElement?.scrollBy(
-              0,
-              mathfieldBounds.bottom - kbdBounds.top + 8
-            );
-          }
-        }
-      }
-    }
-
-    //
-    // 2/ If a render is pending, do it now to make sure we have correct layout
-    // and caret position
-    //
     if (this.dirty) render(this, { interactive: true });
 
-    //
-    // 3/ Get the position of the caret
-    //
-    const fieldBounds = this.field!.getBoundingClientRect();
-    let caretPoint: { x: number; y: number; height: number } | null = null;
-    if (this.model.selectionIsCollapsed)
-      caretPoint = getCaretPoint(this.field!);
-    else {
-      const selectionBounds = getSelectionBounds(this);
-      if (selectionBounds.length > 0) {
-        let maxRight = -Infinity;
-        let minTop = -Infinity;
-        for (const r of selectionBounds) {
-          if (r.right > maxRight) maxRight = r.right;
-          if (r.top < minTop) minTop = r.top;
-        }
-
-        caretPoint = {
-          x: maxRight + fieldBounds.left - this.field!.scrollLeft,
-          y: minTop + fieldBounds.top - this.field!.scrollTop,
-          height: 0,
-        };
-      }
-    }
-
-    //
-    // 4/ Make sure that the caret is vertically visible, but because
-    // vertical scrolling of the field occurs via a scroller that includes
-    // the field and the virtual keyboard toggle, we'll handle the horizontal
-    // scrolling separately
-    //
-    if (this.host && caretPoint) {
-      const hostBounds = this.host.getBoundingClientRect();
-
-      const y = caretPoint.y;
-      let top = this.host.scrollTop;
-      if (y < hostBounds.top) top = y - hostBounds.top + this.host.scrollTop;
-      else if (y > hostBounds.bottom)
-        top = y - hostBounds.bottom + this.host.scrollTop + caretPoint.height;
-      this.host.scroll({ top, left: 0 });
-    }
-
-    //
-    // 5/  Make sure the caret is horizontally visible within the field
-    //
-    if (caretPoint) {
-      const x = caretPoint.x - window.scrollX;
-
-      let left = this.field!.scrollLeft;
-      if (x < fieldBounds.left)
-        left = x - fieldBounds.left + this.field!.scrollLeft - 20;
-      else if (x > fieldBounds.right)
-        left = x - fieldBounds.right + this.field!.scrollLeft + 20;
-
-      this.field!.scroll({
-        top: this.field!.scrollTop, // should always be 0
-        left,
-      });
-    }
+    const caretElement = findElementWithCaret(this.field);
+    if (caretElement)
+      caretElement.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    else if (this.host)
+      this.host.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
 
   insert(s: string, options?: InsertOptions): boolean {
@@ -1729,7 +1645,9 @@ If you are using Vue, this may be because you are using the runtime-only build o
       { once: true, signal }
     );
 
-    document.addEventListener('focusin', () => controller.abort(), { once: true });
+    document.addEventListener('focusin', () => controller.abort(), {
+      once: true,
+    });
   }
 
   onInput(text: string): void {

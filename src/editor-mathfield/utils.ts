@@ -24,7 +24,7 @@ export function isValidMathfield(mf: _Mathfield): boolean {
 /**
  * Return the element which has the caret
  */
-function findElementWithCaret(element: Element): Element | null {
+export function findElementWithCaret(element: Element): Element | null {
   return (
     element.querySelector('.ML__caret') ??
     element.querySelector('.ML__text-caret') ??

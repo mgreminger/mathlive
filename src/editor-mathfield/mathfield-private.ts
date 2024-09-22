@@ -1625,27 +1625,25 @@ If you are using Vue, this may be because you are using the runtime-only build o
     // (the mathfield gets blurred before the window)
     const controller = new AbortController();
     const signal = controller.signal;
-    document.addEventListener(
-      'visibilitychange',
+    window.addEventListener(
+      'blur',
       () => {
-        if (document.visibilityState === 'hidden') {
-          document.addEventListener(
-            'visibilitychange',
-            () => {
-              if (
-                isValidMathfield(this) &&
-                document.visibilityState === 'visible'
-              )
-                this.focus({ preventScroll: true });
-            },
-            { once: true, signal }
-          );
-        }
+        window.addEventListener(
+          'focus',
+          () => {
+            if (isValidMathfield(this)) this.focus({ preventScroll: true });
+          },
+          { once: true, signal }
+        );
       },
       { once: true, signal }
     );
 
     document.addEventListener('focusin', () => controller.abort(), {
+      once: true,
+    });
+
+    document.addEventListener('click', () => controller.abort(), {
       once: true,
     });
   }

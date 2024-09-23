@@ -1646,16 +1646,6 @@ If you are using Vue, this may be because you are using the runtime-only build o
     document.addEventListener('click', () => controller.abort(), {
       once: true,
     });
-
-    window.addEventListener(
-      'keydown',
-      (event: KeyboardEvent) => {
-        if (event.key === 'Escape') {
-          controller.abort();
-        }
-      },
-      { once: true }
-    );
   }
 
   onInput(text: string): void {

@@ -6,23 +6,12 @@ import { MODE_SHIFT_COMMANDS } from '../formats/parse-math-string';
 import { InsertOptions, OutputFormat, Range } from '../public/mathfield';
 import { _Mathfield } from './mathfield-private';
 
-const CLIPBOARD_LATEX_BEGIN = '$$';
-const CLIPBOARD_LATEX_END = '$$';
-
 /** @internal */
 export const defaultExportHook = (
   _from: _Mathfield,
   latex: string,
   _range: Range
 ): string => {
-  // Add a wrapper around the LaTeX to be exported, if necessary
-  if (
-    !MODE_SHIFT_COMMANDS.some(
-      (x) => latex.startsWith(x[0]) && latex.endsWith(x[1])
-    )
-  )
-    latex = `${CLIPBOARD_LATEX_BEGIN} ${latex} ${CLIPBOARD_LATEX_END}`;
-
   return latex;
 };
 

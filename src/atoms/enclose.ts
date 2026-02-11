@@ -8,6 +8,15 @@ import { getDefinition } from '../latex-commands/definitions-utils';
 import { X_HEIGHT, AXIS_HEIGHT } from '../core/font-metrics';
 import type { AtomJson, ToLatexOptions } from 'core/types';
 
+/** Escape special characters to prevent attribute injection in SVG markup. */
+function escapeSvgAttr(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 export type EncloseAtomOptions = {
   shadow?: string;
   strokeWidth?: string;
@@ -252,7 +261,7 @@ export class EncloseAtom extends Atom {
         y + hf + 0.4 * wf
       } `;
       svg += `${x},${y}`;
-      svg += `" stroke='none' fill="${this.strokeColor}"`;
+      svg += `" stroke='none' fill="${escapeSvgAttr(this.strokeColor ?? '')}"`;
       svg += '/>';
     }
     let wDelta = 0;
@@ -316,9 +325,9 @@ export class EncloseAtom extends Atom {
       svg += `M ${padding} ${padding}  a${surdWidth} ${
         (base.depth + base.height + 2 * clearance) / 2
       }, 0, 1, 1, 0 ${base.depth + base.height + 2 * clearance} "`;
-      svg += ` stroke-width="${getRuleThickness(context)}" stroke="${
-        this.strokeColor
-      }" fill="none"`;
+      svg += ` stroke-width="${getRuleThickness(context)}" stroke="${escapeSvgAttr(
+        this.strokeColor ?? ''
+      )}" fill="none"`;
       svg += '/>';
     }
     notation.width = base.width + 2 * padding + wDelta;
@@ -382,12 +391,12 @@ export class EncloseAtom extends Atom {
           'filter: drop-shadow(0 0 .5px rgba(255, 255, 255, .7)) drop-shadow(1px 1px 2px #333)';
       }
       if (this.shadow !== 'none')
-        svgStyle += `filter: drop-shadow(${this.shadow})`;
+        svgStyle += `filter: drop-shadow(${escapeSvgAttr(this.shadow ?? '')})`;
 
-      svgStyle += ` stroke-width="${this.strokeWidth}" stroke="${this.strokeColor}"`;
+      svgStyle += ` stroke-width="${escapeSvgAttr(this.strokeWidth ?? '')}" stroke="${escapeSvgAttr(this.strokeColor ?? '')}"`;
       svgStyle += ' stroke-linecap="round"';
       if (this.svgStrokeStyle)
-        svgStyle += ` stroke-dasharray="${this.svgStrokeStyle}"`;
+        svgStyle += ` stroke-dasharray="${escapeSvgAttr(this.svgStrokeStyle)}"`;
       notation.svgStyle = svgStyle;
       notation.svgOverlay = svg;
     }

@@ -1,3 +1,12 @@
+## [Unreleased]
+
+### Resolved Issues
+
+- **#2906** Fixed a runtime error
+  (`undefined is not an object (evaluating 'this.ariaLiveText.textContent=""')`)
+  that occurred when the mathfield element could not be fully initialized (e.g.
+  in Vue runtime-only builds) or after the mathfield was disposed.
+
 ## 0.108.2 _2025-11-13_
 
 ### Resolved Issues

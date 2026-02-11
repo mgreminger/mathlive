@@ -176,7 +176,7 @@ export class _Mathfield implements Mathfield, KeyboardDelegateInterface {
 
   container: HTMLElement;
   field: HTMLElement;
-  readonly ariaLiveText: HTMLElement;
+  readonly ariaLiveText: HTMLElement | undefined;
   // readonly accessibleMathML: HTMLElement;
 
   atomBoundsCache?: Map<string, Rect>;
@@ -475,7 +475,7 @@ If you are using Vue, this may be because you are using the runtime-only build o
     )
       menuToggle.style.display = 'none';
 
-    this.ariaLiveText = this.element.querySelector('[role=status]')!;
+    this.ariaLiveText = this.element.querySelector<HTMLElement>('[role=status]') ?? undefined;
     // this.accessibleMathML = this.element.querySelector('.accessibleMathML')!;
 
     // Capture clipboard events
@@ -1838,7 +1838,7 @@ If you are using Vue, this may be because you are using the runtime-only build o
     if (_Mathfield._globallyFocusedMathfield === this)
       _Mathfield._globallyFocusedMathfield = undefined;
 
-    this.ariaLiveText!.textContent = '';
+    if (this.ariaLiveText) this.ariaLiveText.textContent = '';
 
     hideSuggestionPopover(this);
 

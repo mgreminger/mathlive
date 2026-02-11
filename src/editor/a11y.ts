@@ -138,7 +138,7 @@ export function defaultAnnounceHook(
     // });
   } else liveText = atoms ? speakableText(action + ' ', atoms) : action;
 
-  if (liveText) {
+  if (liveText && mathfield.ariaLiveText) {
     // Aria-live regions are only spoken when it changes; force a change by
     // alternately using nonbreaking space or narrow nonbreaking space
     const ariaLiveChangeHack = mathfield.ariaLiveText.textContent!.includes(

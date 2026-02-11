@@ -43,7 +43,7 @@ import { computeInsertStyle } from './styling';
  * ## Theory of Operation
  *
  * When the user types on the keyboard, printable keys (i.e. not arrows, shift,
- * escape, etc...) are captured in a `keystrokeBuffer`.
+ * escape, etc...) are captured in a `inlineShortcutBuffer`.
  *
  * The buffer is used to determine if the user intended to type an
  * inline shortcut (e.g. "pi" for `\pi`) or a multichar symbol.

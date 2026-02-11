@@ -22,6 +22,14 @@ import {
   releaseSharedElement,
 } from '../common/shared-element';
 
+function escapeHtmlAttr(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 function latexToMarkup(mf: _Mathfield, latex: string): string {
   const context = new Context({ from: mf.context });
 
@@ -58,9 +66,9 @@ export function showSuggestionPopover(
       '<br>'
     );
 
-    template += `<li role="button" data-command="${command}" ${
+    template += `<li role="button" data-command="${escapeHtmlAttr(command)}" ${
       i === mf.suggestionIndex ? 'class=ML__popover__current' : ''
-    }><span class="ML__popover__latex">${command}</span><span class="ML__popover__command">${commandMarkup}</span>`;
+    }><span class="ML__popover__latex">${escapeHtmlAttr(command)}</span><span class="ML__popover__command">${commandMarkup}</span>`;
 
     if (keybinding)
       template += `<span class="ML__popover__keybinding">${keybinding}</span>`;

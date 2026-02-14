@@ -439,6 +439,8 @@ If you are using Vue, this may be because you are using the runtime-only build o
         }
         ev.preventDefault();
         ev.stopPropagation();
+        this.keyboardDelegate.blur();
+        this.focus();
       },
       { signal }
     );
@@ -475,7 +477,8 @@ If you are using Vue, this may be because you are using the runtime-only build o
     )
       menuToggle.style.display = 'none';
 
-    this.ariaLiveText = this.element.querySelector<HTMLElement>('[role=status]') ?? undefined;
+    this.ariaLiveText =
+      this.element.querySelector<HTMLElement>('[role=status]') ?? undefined;
     // this.accessibleMathML = this.element.querySelector('.accessibleMathML')!;
 
     // Capture clipboard events

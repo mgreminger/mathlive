@@ -1537,7 +1537,7 @@ If you are using Vue, this may be because you are using the runtime-only build o
         new InputEvent('beforeinput', {
           ...options,
           // To work around a bug in WebKit/Safari (the inputType property gets stripped), include the inputType as the 'data' property. (see #1843)
-          data: options.data ? options.data : options.inputType ?? '',
+          data: options.data ? options.data : (options.inputType ?? ''),
           cancelable: true,
           bubbles: true,
           composed: true,
@@ -1623,29 +1623,28 @@ If you are using Vue, this may be because you are using the runtime-only build o
 
     // Wait for the window/document visibility to change
     // (the mathfield gets blurred before the window)
-    const controller = new AbortController();
-    const signal = controller.signal;
-    window.addEventListener(
-      'blur',
-      () => {
-        window.addEventListener(
-          'focus',
-          () => {
-            if (isValidMathfield(this)) this.focus({ preventScroll: true });
-          },
-          { once: true, signal }
-        );
-      },
-      { once: true, signal }
-    );
+    setTimeout(() => {
+      if (document.hasFocus()) return;
 
-    document.addEventListener('focusin', () => controller.abort(), {
-      once: true,
-    });
+      const controller = new AbortController();
 
-    document.addEventListener('click', () => controller.abort(), {
-      once: true,
-    });
+      window.addEventListener('mousedown', () => controller.abort(), {
+        once: true,
+        capture: true,
+      });
+
+      window.addEventListener(
+        'focus',
+        () => {
+          setTimeout(() => {
+            if (!controller.signal.aborted && isValidMathfield(this)) {
+              focusWithoutScrolling(this);
+            }
+          }, 10);
+        },
+        { once: true, signal: controller.signal }
+      );
+    }, 0);
   }
 
   onInput(text: string): void {
@@ -1782,5 +1781,20 @@ If you are using Vue, this may be because you are using the runtime-only build o
         ),
       atomIdsSettings: { seed: 'random', groupNumbers: false },
     };
+  }
+}
+
+function focusWithoutScrolling(element: _Mathfield) {
+  const scrollContainer = document.getElementById('main-content');
+  if (scrollContainer) {
+    const containerTop = scrollContainer.scrollTop;
+    const containerLeft = scrollContainer.scrollLeft;
+
+    element.focus({ preventScroll: true });
+
+    requestAnimationFrame(() => {
+      scrollContainer.scrollTop = containerTop;
+      scrollContainer.scrollLeft = containerLeft;
+    });
   }
 }

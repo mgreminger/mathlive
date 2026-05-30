@@ -1537,7 +1537,7 @@ If you are using Vue, this may be because you are using the runtime-only build o
         new InputEvent('beforeinput', {
           ...options,
           // To work around a bug in WebKit/Safari (the inputType property gets stripped), include the inputType as the 'data' property. (see #1843)
-          data: options.data ? options.data : (options.inputType ?? ''),
+          data: options.data ? options.data : options.inputType ?? '',
           cancelable: true,
           bubbles: true,
           composed: true,
@@ -1627,22 +1627,33 @@ If you are using Vue, this may be because you are using the runtime-only build o
       if (document.hasFocus()) return;
 
       const controller = new AbortController();
+      const signal = controller.signal;
 
-      window.addEventListener('mousedown', () => controller.abort(), {
+      const abortRestoration = () => controller.abort();
+      window.addEventListener('pointerdown', abortRestoration, {
         once: true,
         capture: true,
+        signal,
+      });
+      window.addEventListener('mousedown', abortRestoration, {
+        once: true,
+        capture: true,
+        signal,
       });
 
       window.addEventListener(
         'focus',
         () => {
           setTimeout(() => {
-            if (!controller.signal.aborted && isValidMathfield(this)) {
-              focusWithoutScrolling(this);
+            if (!signal.aborted && isValidMathfield(this)) {
+              if (document.activeElement === document.body) {
+                focusWithoutScrolling(this);
+              }
             }
-          }, 10);
+            controller.abort();
+          }, 50);
         },
-        { once: true, signal: controller.signal }
+        { once: true, signal }
       );
     }, 0);
   }

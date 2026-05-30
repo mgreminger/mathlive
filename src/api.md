@@ -2427,6 +2427,22 @@ The code above will support the following notation:
 
 </MemberCard>
 
+<a id="maxmatrixcols-1" name="maxmatrixcols-1"></a>
+
+<MemberCard>
+
+##### LayoutOptions.maxMatrixCols
+
+```ts
+maxMatrixCols: number;
+```
+
+Sets the maximum number of columns for the matrix environment. The default is
+10 columns to match the behavior of the amsmath matrix environment.
+**Default**: `10`
+
+</MemberCard>
+
 <a id="minfontscale-1" name="minfontscale-1"></a>
 
 <MemberCard>
@@ -3254,7 +3270,7 @@ typically just uppercase and lowercase letters, and digits 0-9 in some cases.
 const version: Object;
 ```
 
-Current version: `{{SDK_VERSION}}`
+Current version: `0.98.6`
 
 The version string of the SDK using the [semver](https://semver.org/) convention:
 
@@ -3273,7 +3289,7 @@ The version string of the SDK using the [semver](https://semver.org/) convention
 ##### version.mathlive
 
 ```ts
-mathlive: string = '{{SDK_VERSION}}';
+mathlive: string = '0.98.6';
 ```
 
 </MemberCard>
@@ -5102,6 +5118,7 @@ remains at its initial value.
 | `default-mode` | `mf.defaultMode` |
 | `letter-shape-style` | `mf.letterShapeStyle` |
 | `min-font-scale` | `mf.minFontScale` |
+| `max-matrix-cols` | `mf.maxMatrixCols` |
 | `popover-policy` | `mf.popoverPolicy` |
 | `math-mode-space` | `mf.mathModeSpace` |
 | `read-only` | `mf.readOnly` |
@@ -5616,6 +5633,28 @@ set mathVirtualKeyboardPolicy(value): void
 [`VirtualKeyboardPolicy`](#virtualkeyboardpolicy)
 
 • **value**: [`VirtualKeyboardPolicy`](#virtualkeyboardpolicy)
+
+</MemberCard>
+
+<a id="maxmatrixcols" name="maxmatrixcols"></a>
+
+<MemberCard>
+
+##### MathfieldElement.maxMatrixCols
+
+```ts
+get maxMatrixCols(): number
+```
+
+```ts
+set maxMatrixCols(value): void
+```
+
+###### Inherit Doc
+
+`number`
+
+• **value**: `number`
 
 </MemberCard>
 
@@ -6198,7 +6237,7 @@ static speakHook: (text) => void = defaultSpeakHook;
 ##### MathfieldElement.version
 
 ```ts
-static version: string = '{{SDK_VERSION}}';
+static version: string = '0.98.6';
 ```
 
 </MemberCard>
@@ -6658,13 +6697,33 @@ options for the SRE engine are documented
 
 ##### MathfieldElement.executeCommand()
 
+###### executeCommand(selector)
+
 ```ts
-executeCommand(command): boolean
+executeCommand(selector): boolean
 ```
 
-• **command**: [`Selector`](#selector) \| [[`Selector`](#selector), `...any[]`]
+• **selector**: [`Selector`](#selector)
 
 ###### Inherit Doc
+
+###### executeCommand(selector, args)
+
+```ts
+executeCommand(selector, ...args): boolean
+```
+
+• **selector**: [`Selector`](#selector)
+
+• ...**args**: `unknown`[]
+
+###### executeCommand(selector)
+
+```ts
+executeCommand(selector): boolean
+```
+
+• **selector**: [[`Selector`](#selector), `...unknown[]`]
 
 </MemberCard>
 
@@ -7378,6 +7437,18 @@ mathfield is focused on a touch capable device.
 - `"sandboxed"`: the virtual keyboard is displayed in the current browsing
 context (iframe) if it has a defined container or is the top-level browsing
 context.
+
+</MemberCard>
+
+<a id="max-matrix-cols" name="max-matrix-cols"></a>
+
+<MemberCard>
+
+##### MathfieldElementAttributes.max-matrix-cols
+
+```ts
+max-matrix-cols: number;
+```
 
 </MemberCard>
 
